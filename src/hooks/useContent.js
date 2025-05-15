@@ -1,11 +1,13 @@
 import {useEffect, useState} from 'react'
 import axios from "axios";
+import {scaleOrdinal} from 'd3'
 
 function useContent(sab) {
 
     const [ubkg, setUbkg] = useState({})
 
-    const loadUbkg = async () => {
+    const loadUbkg = async (Palette) => {
+        const color = scaleOrdinal(Palette.pinkColors)
         let organTypes = await axios.get(
             `https://ontology.api.hubmapconsortium.org/organs?application_context=${sab}`,
             {
@@ -14,16 +16,19 @@ function useContent(sab) {
                 }
             }
         )
-        let organsDict = {}
+        let organPalette = {}
+        let groupName
         for (let o of organTypes.data) {
-            organsDict[o.term.trim().toLowerCase()] = o.category?.term?.trim() || o.term?.trim()
+            groupName = o.category?.term?.trim() || o.term?.trim()
+            organPalette[groupName] = color(groupName)
         }
-        window.UBKG = {organTypes: organTypes.data, organTypesGroups: organsDict}
-        return window.UBKG
+        return {organs: organPalette }
     }
 
     useEffect(() => {
-        loadUbkg().then((r) => setUbkg(r))
+        import('xac-sankey').then((xac)=>{
+            loadUbkg(xac.Palette).then((r) => setUbkg(r))
+        })
     }, [])
 
     return {ubkg}
