@@ -46,19 +46,25 @@ async function getData(context, token) {
         return colors
     }
 
-    const loadDatasetTypes = async (Palette) => {
+    const loadDatasetTypes = async (Palette, uri='dataset-types') => {
         const color = scaleOrdinal(Palette.greenColors)
         let result = await axios.get(
-            `${ubkgBase}assayclasses?application_context=${context}`,
+            `${ubkgBase}${uri}?application_context=${context}`,
             requestOptions
         )
         let colors = {}
         let groupName, groupName2
         for (let o of result.data) {
-            groupName = o.value?.dataset_type?.trim()
-            groupName2 = o.value?.description?.trim()
+            if (uri == 'dataset-types') {
+                groupName = o.dataset_type?.trim()
+            } else {
+                groupName = o.value?.dataset_type?.trim()
+                groupName2 = o.value?.description?.trim()
+                colors[groupName2] = color(groupName2)
+            }
+            
             colors[groupName] = color(groupName)
-            colors[groupName2] = color(groupName2)
+            
         }
         return colors
     }
@@ -67,10 +73,11 @@ async function getData(context, token) {
 
     const p1 = loadOrgans(xac.Palette)
     const p2 = loadDatasetTypes(xac.Palette)
+    const p2b = loadDatasetTypes(xac.Palette, 'assayclasses')
     const p3 = loadGroups(xac.Palette)
 
-    const v = await Promise.all([p1, p2, p3]);
-    return {organs: v[0], datasetTypes: v[1], groups: v[2]}
+    const v = await Promise.all([p1, p2, p2b, p3]);
+    return {organs: v[0], datasetTypes: {...v[1], ...v[2]}, groups: v[3]}
     
 }
 

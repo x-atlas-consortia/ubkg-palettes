@@ -21,6 +21,7 @@ export default function Home() {
     try {
       const t = getToken()
       localStorage.setItem('token', t)
+      localStorage.setItem(`${context}_token`, t)
       const content = await getData(context, t)
       const r = await axios.post('/api/build', {data: content, context })
       console.log(r.data)
