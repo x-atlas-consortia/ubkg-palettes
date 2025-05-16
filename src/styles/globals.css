@@ -14,6 +14,7 @@ html,
 body {
   max-width: 100vw;
   overflow-x: hidden;
+  text-align: center;
 }
 
 body {
@@ -35,8 +36,15 @@ a {
   text-decoration: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
+button {
+  padding: 10px;
+  margin-left: 50px;
+}
+
+h1, button, div {
+  margin-top: 40px;
+}
+
+textarea {
+  width: 50%;
 }
