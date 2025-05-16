@@ -5,9 +5,9 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const [token, setToken] = useState('')
   
-  const print = (e) => {
+  const print = (e, color = 'green') => {
     const $console = document.getElementById('js-console')
-    $console.innerHTML = `${new Date().toLocaleString()} >>> <strong>${e}</strong>`
+    $console.innerHTML = `${new Date().toLocaleString()} >>> <strong style="color: ${color};">${e}</strong>`
   }
 
   useEffect(()=> {
@@ -26,7 +26,7 @@ export default function Home() {
       console.log(r.data)
       print(r.data.msg)
     } catch(e) {
-      print(e)
+      print(e, 'red')
     }
 
   }
